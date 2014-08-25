@@ -3,10 +3,31 @@ heat_template_version: 2013-05-23
 description: >
   Template that just defines a single compute instance.
 
+parameters:
+  key_name:
+    type: string
+    description: Name of an existing key pair to use for the instance
+  flavor:
+    type: string
+    description: flavor for the server to be created
+    default: m1.small
+    constraints:
+      - allowed_values: [m1.tiny, m1.small]
+        description: Value must be one of 'm1.tiny', 'm1.tiny'
+  image:
+    type: string
+    default: heat-agent
+    description: ID/name of the image to use for the server
+
 resources:
   my_server:
     type: OS::Nova::Server
     properties:
-      key_name: heat_key
-      image: heat-agent
-      flavor: m1.small
+      key_name: {get_param: key_name}
+      image: {get_param: image}
+      flavor: {get_param: flavor}
+
+outputs:
+  server_ssh:
+    description: Ssh access to server
+    value: {'Fn::Select': ['addr', {'Fn::Select': [1, {'Fn::Select': ['default', {get_attr: [my_server, addresses]}]}]}]}
