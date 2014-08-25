@@ -1,0 +1,12 @@
+heat_template_version: 2013-05-23
+
+description: >
+  Template that just defines a single compute instance.
+
+resources:
+  my_server:
+    type: OS::Nova::Server
+    properties:
+      key_name: heat_key
+      image: heat-agent
+      flavor: m1.small
